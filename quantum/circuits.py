@@ -62,6 +62,7 @@ from __future__ import annotations
 from typing import Iterable, List, Optional, Sequence, Tuple, Dict, Union
 import math
 import warnings
+from spec.spec_loader import get_operator_registry
 
 try:
     # Qiskit >= 1.x
@@ -327,6 +328,53 @@ def apply_phase_kick(qc: QuantumCircuit, theta: float, controlled: bool = False)
         qc.p(float(theta), target)
     return qc
 
+# -- spec-driven operator application --
+
+def _apply_op(qc, op_name: str, params: dict):
+    # Минимальный белый список безопасных операторов
+    if op_name == "h_gate":
+        qc.h(int(params["target_qubit"]))
+    elif op_name == "cx_gate":
+        qc.cx(int(params["control_qubit"]), int(params["target_qubit"]))
+    elif op_name == "rz":
+        qc.rz(float(params["theta"]), int(params["target_qubit"]))
+    elif op_name == "ry":
+        qc.ry(float(params["theta"]), int(params["target_qubit"]))
+    elif op_name == "rzz":
+        qc.rzz(float(params["theta"]), int(params["control_qubit"]), int(params["target_qubit"]))
+    elif op_name == "phase":
+        qc.p(float(params["theta"]), int(params["target_qubit"]))
+    elif op_name == "measure":
+        # Позже можно оптимизировать, но для простоты измерим все
+        qc.measure_all()
+    else:
+        raise ValueError(f"Unsupported operator in spec: {op_name}")
+
+def build_circuit_from_spec(n_qubits: int, sequence: list[dict], name: str = "spec_circuit"):
+    """
+    sequence: список шагов вида:
+      {"name": "h_gate", "params": {"target_qubit": 0}}
+      {"name": "cx_gate", "params": {"control_qubit": 0, "target_qubit": 1}}
+      {"name": "rz", "params": {"target_qubit": 0, "theta": 0.3}}
+      {"name": "measure", "params": {}}
+    """
+    if n_qubits <= 0:
+        raise ValueError("n_qubits must be positive")
+    qc = QuantumCircuit(n_qubits, name=name)
+    for step in sequence:
+        _apply_op(qc, step["name"], step.get("params", {}))
+    return qc
+
+def build_circuit_from_registry(n_qubits: int, name: str = "spec_registry_example"):
+    """
+    Пример: читает operators.json (как реестр доступных операторов),
+    но последовательность шагов ты передаёшь сам (см. build_circuit_from_spec).
+    Эта функция полезна, если хочешь сперва проверить, что нужные операторы поддерживаются.
+    """
+    registry = get_operator_registry()
+    supported = {op["name"] for op in registry.get("quantum", [])}
+    # просто возвращаем список/набор, чтобы можно было валидировать снаружи
+    return supported
 
 # ---------------------------------------------------------------------
 # Measurement & Execution (§14)

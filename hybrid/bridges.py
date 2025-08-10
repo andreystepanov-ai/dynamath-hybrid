@@ -21,6 +21,7 @@ Design principles:
 from __future__ import annotations
 
 from dataclasses import dataclass
+from spec.spec_loader import get_project_config
 from typing import Iterable, List, Literal, Optional, Sequence, Tuple, Union
 
 import numpy as np
@@ -80,7 +81,29 @@ class BridgeConfig:
 # ================================
 # Utilities
 # ================================
+# --- add below existing imports ---
+from spec.spec_loader import get_project_config
 
+# --- add below BridgeConfig class ---
+def bridge_config_from_spec(fallback: BridgeConfig = BridgeConfig()) -> BridgeConfig:
+    cfg = get_project_config()  # spec/hybrid.toml
+    q = (cfg.get("quantum") or {})
+    t = (cfg.get("tensor") or {})
+
+    max_q = q.get("max_qubits", fallback.max_qubits)
+    norm  = (t.get("normalize_inputs", True))
+    normalize_mode = "l2" if norm else "none"
+
+    return BridgeConfig(
+        encode_mode=fallback.encode_mode,
+        pow2_policy=fallback.pow2_policy,
+        normalize=normalize_mode,
+        dtype_real=fallback.dtype_real,
+        dtype_complex=fallback.dtype_complex,
+        angle_clip=fallback.angle_clip,
+        eps=fallback.eps,
+        max_qubits=max_q
+    )
 def _to_1d_array(x: ArrayLike, dtype: np.dtype) -> np.ndarray:
     a = np.asarray(x, dtype=dtype)
     if a.ndim == 0:

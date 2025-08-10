@@ -1,5 +1,9 @@
-# Dynamath Hybrid
+Dynamath Hybrid
 
-**Dynamath Hybrid** — экспериментальная платформа для смешанных Tensor+Quantum вычислений.  
-Проект делится на несколько слоев: `core` для тензорных вычислений (JAX/PyTorch), `quantum` для квантовых цепей (Qiskit/Cirq), `hybrid` для мостов между ними, `viz` для визуализации и `spec` для описаний форматов данных и API.
-
+Dynamath Hybrid — an experimental platform for mixed Tensor + Quantum computing.
+The project is structured into several layers:
+	•	core for tensor computations (JAX/PyTorch)
+	•	quantum for quantum circuits (Qiskit/Cirq)
+	•	hybrid for bridges between them
+	•	viz for visualization
+	•	spec for data format and API specifications

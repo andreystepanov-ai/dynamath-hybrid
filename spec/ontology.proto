@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package dynamath.spec;
+
+// Tensor representation
+message Tensor {
+    repeated float values = 1;
+    repeated int32 shape = 2;
+    string dtype = 3;
+}
+
+// Quantum state representation
+message QuantumState {
+    repeated complex amplitudes = 1; // Complex type encoded as two floats [real, imag]
+    int32 num_qubits = 2;
+}
+
+// Operator definition
+message Operator {
+    string name = 1;
+    string type = 2; // "tensor" or "quantum"
+    string description = 3;
+}
+
+// Full computation request
+message HybridComputation {
+    Tensor input_tensor = 1;
+    repeated Operator operators = 2;
+}
+
+// Result
+message HybridResult {
+    Tensor output_tensor = 1;
+    QuantumState final_state = 2;
+}

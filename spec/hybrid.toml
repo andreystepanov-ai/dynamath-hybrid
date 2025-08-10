@@ -1,0 +1,22 @@
+[project]
+name = "Dynamath Hybrid"
+version = "0.1.0"
+spec_version = "1.0"
+
+[paths]
+tensor_core = "../core/tensors.py"
+hybrid_bridge = "../hybrid/bridges.py"
+quantum_circuits = "../quantum/circuits.py"
+
+[quantum]
+backend = "qiskit_aer"
+shots = 1024
+max_qubits = 8
+
+[tensor]
+framework = "jax" # or "pytorch"
+precision = "float32"
+normalize_inputs = true
+
+[logging]
+level = "INFO"

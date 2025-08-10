@@ -1,0 +1,31 @@
+{
+    "tensor": [
+        {
+            "name": "normalize",
+            "description": "Normalizes a tensor to unit norm",
+            "parameters": []
+        },
+        {
+            "name": "matmul",
+            "description": "Performs matrix multiplication between two tensors",
+            "parameters": ["tensor_a", "tensor_b"]
+        }
+    ],
+    "quantum": [
+        {
+            "name": "h_gate",
+            "description": "Hadamard gate applied to a qubit",
+            "parameters": ["target_qubit"]
+        },
+        {
+            "name": "cx_gate",
+            "description": "CNOT gate between control and target qubits",
+            "parameters": ["control_qubit", "target_qubit"]
+        },
+        {
+            "name": "measure",
+            "description": "Measures a qubit and stores the result",
+            "parameters": ["target_qubit"]
+        }
+    ]
+}
